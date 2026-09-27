@@ -181,3 +181,12 @@ h1 {
 .stat-value {
   font-weight: 600;
 }
+
+.app-header {
+  margin-bottom: 8px;
+}
+
+.app-title-link {
+  text-decoration: none;
+  color: inherit;
+}

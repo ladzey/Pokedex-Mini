@@ -1,18 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-
-function getIdFromUrl(url) {
-  const parts = url.split("/").filter(Boolean);
-  return parts[parts.length - 1];
-}
-
-function capitalize(name) {
-  return name.charAt(0).toUpperCase() + name.slice(1);
-}
-
-function getSpriteUrl(id) {
-  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
-}
+import { API_BASE_URL } from "../config.js";
+import { getIdFromUrl, capitalize, getSpriteUrl } from "../utils.js";
 
 function PokemonList() {
   const [pokemons, setPokemons] = useState([]);
@@ -25,9 +14,7 @@ function PokemonList() {
       setError(null);
 
       try {
-        const response = await fetch(
-          "https://pokeapi.co/api/v2/pokemon?limit=20",
-        );
+        const response = await fetch(`${API_BASE_URL}/pokemon?limit=20`);
 
         if (!response.ok) {
           throw new Error(`Server responded with status ${response.status}`);

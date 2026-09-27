@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-
-function capitalize(name) {
-  return name.charAt(0).toUpperCase() + name.slice(1);
-}
+import { API_BASE_URL } from "../config.js";
+import { capitalize } from "../utils.js";
 
 function DetailPage() {
   const { name } = useParams();
@@ -20,9 +18,7 @@ function DetailPage() {
       setPokemon(null);
 
       try {
-        const response = await fetch(
-          `https://pokeapi.co/api/v2/pokemon/${name}`,
-        );
+        const response = await fetch(`${API_BASE_URL}/pokemon/${name}`);
 
         if (!response.ok) {
           throw new Error(`No Pokémon named "${name}" — check the spelling.`);
