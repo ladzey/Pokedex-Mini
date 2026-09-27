@@ -51,6 +51,14 @@ function DetailPage() {
     };
   }, [name]); // re-run whenever the :name in the URL changes
 
+  useEffect(() => {
+    if (pokemon) {
+      document.title = `${capitalize(pokemon.name)} | PokéDex`;
+    } else {
+      document.title = "PokéDex Mini";
+    }
+  }, [pokemon]);
+
   if (isLoading) return <p className="status">Loading {name}…</p>;
   if (error) return <p className="status status-error">{error}</p>;
 
