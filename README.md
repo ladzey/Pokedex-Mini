@@ -1,16 +1,80 @@
-# React + Vite
+# PokéDex Mini
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A small React application for browsing Pokémon with data provided by the [PokéAPI](https://pokeapi.co/).
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Browse the first 20 Pokémon from the PokéAPI
+- Search for a Pokémon by name
+- View a Pokémon's official artwork, types, and base stats
+- Navigate between the Pokémon list and detail pages
+- Responsive loading and error states
+- Client-side routing with React Router
 
-## React Compiler
+## Tech stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 19
+- React Router
+- Vite
+- JavaScript
+- PokéAPI
 
-## Expanding the ESLint configuration
+## Getting started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Prerequisites
+
+- Node.js and npm
+
+### Installation
+
+```bash
+npm install
+```
+
+### Run the development server
+
+```bash
+npm run dev
+```
+
+Open the local URL shown by Vite in your browser.
+
+## Available scripts
+
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the development server |
+| `npm run build` | Create a production build |
+| `npm run preview` | Preview the production build locally |
+| `npm run lint` | Run ESLint |
+| `npm run deploy` | Deploy the `dist` directory to GitHub Pages |
+
+## Project structure
+
+```text
+src/
+├── components/
+│   ├── Layout.jsx
+│   ├── PokemonList.jsx
+│   └── SearchForm.jsx
+├── pages/
+│   ├── DetailPage.jsx
+│   ├── ListPage.jsx
+│   └── NotFoundPage.jsx
+├── App.jsx
+├── config.js
+├── index.css
+├── main.jsx
+└── utils.js
+```
+
+## Routes
+
+- `/` — Pokémon list and search form
+- `/pokemon/:name` — Pokémon details
+- `*` — Not-found page
+
+## Data sources
+
+- Pokémon data: [PokéAPI](https://pokeapi.co/api/v2)
+- Pokémon sprites: [PokeAPI sprites](https://github.com/PokeAPI/sprites)
