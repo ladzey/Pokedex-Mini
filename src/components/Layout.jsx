@@ -1,16 +1,48 @@
+import { useEffect, useState } from "react";
 import { Outlet, Link } from "react-router-dom";
+import SearchBox from "./SearchBox.jsx";
+import BootScreen from "./BootScreen.jsx";
+
+const BOOT_FLAG = "pokedex-booted";
 
 function Layout() {
+  const [isBooting, setIsBooting] = useState(
+    () => !window.sessionStorage.getItem(BOOT_FLAG),
+  );
+
+  useEffect(() => {
+    if (!isBooting) return undefined;
+    const timer = setTimeout(() => {
+      window.sessionStorage.setItem(BOOT_FLAG, "1");
+      setIsBooting(false);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [isBooting]);
+
   return (
     <div className="app">
-      <header className="app-header">
-        <Link to="/" className="app-title-link">
-          <h1>PokéDex Mini</h1>
+      {isBooting && <BootScreen />}
+
+      <header className="topbar">
+        <Link to="/" className="brand" aria-label="PokéDex Mini home">
+          <span className="brand__ball" aria-hidden="true" />
+          <span className="brand__name">POKÉDEX</span>
+          <span className="brand__sub">MINI</span>
         </Link>
+        <SearchBox />
       </header>
-      <main>
+
+      <main className="app__main">
         <Outlet />
       </main>
+
+      <footer className="footer">
+        Data from{" "}
+        <a href="https://pokeapi.co" target="_blank" rel="noreferrer">
+          PokéAPI
+        </a>{" "}
+        · Built with React + Vite
+      </footer>
     </div>
   );
 }
