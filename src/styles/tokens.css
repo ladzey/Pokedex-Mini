@@ -1,0 +1,109 @@
+:root {
+  /* --- surfaces & shell --- */
+  --chassis: #101418;
+  --chassis-2: #171d24;
+  --chassis-3: #1e2630;
+  --shell: #e0273f;
+  --shell-dark: #8f1428;
+  --lcd: #123a34;
+  --lcd-2: #0d2b26;
+  --phosphor: #59f8c2;
+  --amber: #ffb020;
+  --danger: #ff5a6a;
+
+  /* --- text & lines --- */
+  --ink: #e9f1ef;
+  --ink-dim: #93a7a4;
+  --line: rgba(89, 248, 194, 0.14);
+  --line-strong: rgba(89, 248, 194, 0.32);
+
+  /* --- geometry --- */
+  --radius: 14px;
+  --radius-sm: 9px;
+  --shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
+  --shadow-soft: 0 6px 18px rgba(0, 0, 0, 0.32);
+
+  /* --- typefaces --- */
+  --font-display: "Chakra Petch", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* --- canonical type colors --- */
+  --type-normal: #a8a77a;
+  --type-fire: #ee8130;
+  --type-water: #6390f0;
+  --type-electric: #f7d02c;
+  --type-grass: #7ac74c;
+  --type-ice: #96d9d6;
+  --type-fighting: #c22e28;
+  --type-poison: #a33ea1;
+  --type-ground: #e2bf65;
+  --type-flying: #a98ff3;
+  --type-psychic: #f95587;
+  --type-bug: #a6b91a;
+  --type-rock: #b6a136;
+  --type-ghost: #735797;
+  --type-dragon: #6f35fc;
+  --type-dark: #705746;
+  --type-steel: #b7b7ce;
+  --type-fairy: #d685ad;
+}
+
+/*
+ * Any element with data-type gets a --type custom property. This single block
+ * powers both .type-badge backgrounds and per-Pokémon accent colors.
+ */
+[data-type="normal"] {
+  --type: var(--type-normal);
+}
+[data-type="fire"] {
+  --type: var(--type-fire);
+}
+[data-type="water"] {
+  --type: var(--type-water);
+}
+[data-type="electric"] {
+  --type: var(--type-electric);
+}
+[data-type="grass"] {
+  --type: var(--type-grass);
+}
+[data-type="ice"] {
+  --type: var(--type-ice);
+}
+[data-type="fighting"] {
+  --type: var(--type-fighting);
+}
+[data-type="poison"] {
+  --type: var(--type-poison);
+}
+[data-type="ground"] {
+  --type: var(--type-ground);
+}
+[data-type="flying"] {
+  --type: var(--type-flying);
+}
+[data-type="psychic"] {
+  --type: var(--type-psychic);
+}
+[data-type="bug"] {
+  --type: var(--type-bug);
+}
+[data-type="rock"] {
+  --type: var(--type-rock);
+}
+[data-type="ghost"] {
+  --type: var(--type-ghost);
+}
+[data-type="dragon"] {
+  --type: var(--type-dragon);
+}
+[data-type="dark"] {
+  --type: var(--type-dark);
+}
+[data-type="steel"] {
+  --type: var(--type-steel);
+}
+[data-type="fairy"] {
+  --type: var(--type-fairy);
+}

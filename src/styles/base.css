@@ -1,0 +1,256 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--ink);
+  line-height: 1.5;
+  background:
+    radial-gradient(
+      1100px 560px at 50% -12%,
+      rgba(224, 39, 63, 0.2),
+      transparent 62%
+    ),
+    radial-gradient(
+      900px 520px at 118% 112%,
+      rgba(89, 248, 194, 0.1),
+      transparent 60%
+    ),
+    var(--chassis);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: var(--phosphor);
+}
+
+button {
+  font-family: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--phosphor);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+::selection {
+  background: rgba(89, 248, 194, 0.28);
+}
+
+/* ------------------------------------------------------------------ layout */
+
+.app {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 20px 16px 64px;
+}
+
+.app__main {
+  margin-top: 20px;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: linear-gradient(
+    180deg,
+    rgba(224, 39, 63, 0.16),
+    rgba(16, 20, 24, 0.86)
+  );
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-soft);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--ink);
+  flex-shrink: 0;
+}
+
+.brand__ball {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  align-self: center;
+  background: linear-gradient(
+    to bottom,
+    var(--shell) 0 46%,
+    #0b0e11 46% 54%,
+    #fff 54% 100%
+  );
+  box-shadow: inset 0 0 0 2px #0b0e11;
+}
+
+.brand__name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.06em;
+}
+
+.brand__sub {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  color: var(--phosphor);
+}
+
+.footer {
+  margin-top: 56px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--ink-dim);
+  text-align: center;
+}
+
+.muted {
+  color: var(--ink-dim);
+}
+
+.center {
+  text-align: center;
+}
+
+/* ------------------------------------------------------------ boot screen */
+
+.boot {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  gap: 18px;
+  background: var(--chassis);
+  animation: boot-out 0.55s ease 1.25s forwards;
+}
+
+.boot__ball {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(
+    to bottom,
+    var(--shell) 0 46%,
+    #0b0e11 46% 54%,
+    #fff 54% 100%
+  );
+  box-shadow:
+    inset 0 0 0 5px #0b0e11,
+    0 0 60px rgba(224, 39, 63, 0.5);
+  animation: spin 1.1s linear infinite;
+}
+
+.boot__text {
+  display: grid;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: var(--phosphor);
+  text-align: center;
+}
+
+.boot__text span {
+  opacity: 0;
+  animation: boot-line 0.4s ease forwards;
+}
+
+.boot__text span:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.boot__text span:nth-child(2) {
+  animation-delay: 0.45s;
+}
+.boot__text span:nth-child(3) {
+  animation-delay: 0.8s;
+  color: var(--amber);
+}
+
+.boot__scanline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 30%;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(89, 248, 194, 0.16),
+    transparent
+  );
+  animation: scan-down 1.4s ease-in-out infinite;
+}
+
+@keyframes boot-out {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes boot-line {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes scan-down {
+  from {
+    transform: translateY(-120%);
+  }
+  to {
+    transform: translateY(420%);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ------------------------------------------------------- reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
