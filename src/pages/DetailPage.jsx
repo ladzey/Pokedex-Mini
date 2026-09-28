@@ -1,87 +1,192 @@
-import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
-import { API_BASE_URL } from "../config.js";
-import { capitalize } from "../utils.js";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { getType } from "../lib/api.js";
+import { usePokemonDetail } from "../hooks/usePokemonDetail.js";
+import { useFetch } from "../hooks/useFetch.js";
+import {
+  capitalize,
+  computeMatchups,
+  formatHeight,
+  formatWeight,
+  getArtworkUrl,
+  getShinyArtworkUrl,
+  getEnglishFlavor,
+  getGenus,
+  parseEvolutionChain,
+} from "../utils.js";
+import TypeBadge from "../components/TypeBadge.jsx";
+import StatBars from "../components/StatBars.jsx";
+import TypeMatchup from "../components/TypeMatchup.jsx";
+import EvolutionChain from "../components/EvolutionChain.jsx";
+import SpriteGallery from "../components/SpriteGallery.jsx";
+import CryButton from "../components/CryButton.jsx";
+import { DetailSkeleton } from "../components/Skeletons.jsx";
+import { ErrorState } from "../components/States.jsx";
 
 function DetailPage() {
   const { name } = useParams();
-  const [pokemon, setPokemon] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { data, isLoading, error } = usePokemonDetail(name);
+  const [showShiny, setShowShiny] = useState(false);
+
+  const pokemon = data?.pokemon;
+  const species = data?.species;
+  const evolution = data?.evolution;
+
+  const typeNames = pokemon ? pokemon.types.map((slot) => slot.type.name) : [];
+  const typeKey = typeNames.join(",");
+
+  const { data: typeDataList } = useFetch(
+    () =>
+      typeNames.length
+        ? Promise.all(typeNames.map((type) => getType(type)))
+        : Promise.resolve(null),
+    [typeKey],
+  );
+
+  const matchups = useMemo(
+    () => (typeDataList ? computeMatchups(typeDataList) : null),
+    [typeDataList],
+  );
+
+  const stages = useMemo(
+    () => (evolution ? parseEvolutionChain(evolution.chain) : []),
+    [evolution],
+  );
 
   useEffect(() => {
-    let isCurrent = true;
-
-    async function loadPokemon() {
-      setIsLoading(true);
-      setError(null);
-      setPokemon(null);
-
-      try {
-        const response = await fetch(`${API_BASE_URL}/pokemon/${name}`);
-
-        if (!response.ok) {
-          throw new Error(`No Pokémon named "${name}" — check the spelling.`);
-        }
-
-        const data = await response.json();
-
-        if (isCurrent) {
-          setPokemon(data);
-        }
-      } catch (err) {
-        if (isCurrent) {
-          setError(err.message);
-        }
-      } finally {
-        if (isCurrent) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    loadPokemon();
-
-    return () => {
-      isCurrent = false;
-    };
-  }, [name]); // re-run whenever the :name in the URL changes
-
-  useEffect(() => {
-    if (pokemon) {
-      document.title = `${capitalize(pokemon.name)} | PokéDex`;
-    } else {
-      document.title = "PokéDex Mini";
-    }
+    document.title = pokemon
+      ? `${capitalize(pokemon.name)} | PokéDex`
+      : "PokéDex Mini";
   }, [pokemon]);
 
-  if (isLoading) return <p className="status">Loading {name}…</p>;
-  if (error) return <p className="status status-error">{error}</p>;
+  useEffect(() => {
+    setShowShiny(false);
+  }, [name]);
+
+  if (isLoading) return <DetailSkeleton />;
+
+  if (error) {
+    return (
+      <ErrorState
+        title="No scan found"
+        message={`We couldn't find a Pokémon named “${name}”. Check the spelling or go back to the dex.`}
+      />
+    );
+  }
+
+  if (!pokemon) return null;
+
+  const flavor = species ? getEnglishFlavor(species) : "";
+  const genus = species ? getGenus(species) : "";
+  const cryUrl = pokemon.cries?.latest ?? pokemon.cries?.legacy ?? null;
 
   return (
-    <div className="detail-page">
-      <Link to="/" className="back-link">
-        ← Back to list
-      </Link>
-      <img
-        src={pokemon.sprites.other["official-artwork"].front_default}
-        alt={pokemon.name}
-        width={200}
-        height={200}
-      />
-      <h2>{capitalize(pokemon.name)}</h2>
-      <p className="pokemon-types">
-        {pokemon.types.map((t) => t.type.name).join(", ")}
-      </p>
-      <ul className="stat-list">
-        {pokemon.stats.map((s) => (
-          <li key={s.stat.name}>
-            <span className="stat-name">{s.stat.name}</span>
-            <span className="stat-value">{s.base_stat}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <article className="detail-page" data-type={pokemon.types[0].type.name}>
+      <div className="detail-topline">
+        <Link to="/" className="back-link" viewTransition>
+          ← Back to dex
+        </Link>
+        <span className="scan-tag">SCAN COMPLETE</span>
+      </div>
+
+      <header className="detail-header">
+        <span className="detail-number">
+          #{String(pokemon.id).padStart(3, "0")}
+        </span>
+        <h1 className="detail-name">{capitalize(pokemon.name)}</h1>
+        <div className="detail-types">
+          {pokemon.types.map((slot) => (
+            <TypeBadge key={slot.type.name} type={slot.type.name} />
+          ))}
+        </div>
+        <p className="detail-genus">{genus}</p>
+      </header>
+
+      <div className="detail-hero">
+        <div className="detail-artwork">
+          <img
+            className="detail-artwork__img"
+            src={
+              showShiny
+                ? getShinyArtworkUrl(pokemon.id)
+                : getArtworkUrl(pokemon.id)
+            }
+            alt={pokemon.name}
+            width={280}
+            height={280}
+          />
+          <span className="detail-artwork__sweep" aria-hidden="true" />
+        </div>
+
+        <div className="detail-hero__info">
+          {flavor && <p className="detail-flavor">{flavor}</p>}
+
+          <dl className="vitals">
+            <div>
+              <dt>Height</dt>
+              <dd>{formatHeight(pokemon.height)}</dd>
+            </div>
+            <div>
+              <dt>Weight</dt>
+              <dd>{formatWeight(pokemon.weight)}</dd>
+            </div>
+            <div>
+              <dt>Base XP</dt>
+              <dd>{pokemon.base_experience ?? "—"}</dd>
+            </div>
+          </dl>
+
+          <div className="abilities">
+            <span className="abilities__label">Abilities</span>
+            <ul className="abilities__list">
+              {pokemon.abilities.map((slot) => (
+                <li
+                  key={slot.ability.name}
+                  className={slot.is_hidden ? "is-hidden" : ""}
+                >
+                  {capitalize(slot.ability.name)}
+                  {slot.is_hidden && <em> · hidden</em>}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="detail-actions">
+            <CryButton url={cryUrl} />
+            <button
+              type="button"
+              className="btn btn--ghost"
+              aria-pressed={showShiny}
+              onClick={() => setShowShiny((value) => !value)}
+            >
+              <span className="btn__glyph" aria-hidden="true">
+                ✦
+              </span>
+              {showShiny ? "Shiny on" : "Shiny off"}
+            </button>
+          </div>
+
+          <SpriteGallery pokemon={pokemon} />
+        </div>
+      </div>
+
+      <section className="panel">
+        <h2 className="panel__title">Base stats</h2>
+        <StatBars stats={pokemon.stats} />
+      </section>
+
+      {matchups && (
+        <section className="panel">
+          <h2 className="panel__title">Type matchup</h2>
+          <TypeMatchup matchups={matchups} />
+        </section>
+      )}
+
+      <section className="panel">
+        <h2 className="panel__title">Evolution</h2>
+        <EvolutionChain stages={stages} />
+      </section>
+    </article>
   );
 }
 
