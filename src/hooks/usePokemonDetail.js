@@ -10,6 +10,7 @@ export function usePokemonDetail(nameOrId) {
 
   useEffect(() => {
     let isCurrent = true;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setState({ data: null, isLoading: true, error: null });
 
     async function load() {

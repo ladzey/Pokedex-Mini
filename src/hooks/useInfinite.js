@@ -6,6 +6,7 @@ export function useInfiniteList(total, pageSize = 24) {
 
   // Reset the window whenever the filtered result set changes.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCount(pageSize);
   }, [total, pageSize]);
 

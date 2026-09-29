@@ -9,6 +9,7 @@ export function useFetch(fetcher, deps = []) {
 
   useEffect(() => {
     let isCurrent = true;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setState({ data: null, isLoading: true, error: null });
 
     Promise.resolve()
@@ -25,6 +26,7 @@ export function useFetch(fetcher, deps = []) {
     return () => {
       isCurrent = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
   return state;

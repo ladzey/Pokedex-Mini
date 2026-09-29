@@ -43,5 +43,5 @@ export function getEvolutionChain(url) {
 }
 
 export function getType(name) {
-  return apiGet(`.type/${name}`);
+  return apiGet(`/type/${name}`);
 }
