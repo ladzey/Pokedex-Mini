@@ -46,6 +46,28 @@ export function getShinyArtworkUrl(id) {
   return `${ARTWORK_BASE_URL}/shiny/${id}.png`;
 }
 
+/**
+ * Build the selectable sprite variants for a Pokémon. Used by both the hero
+ * image and the gallery so they stay in sync.
+ */
+export function getSpriteOptions(pokemon) {
+  const sprites = pokemon.sprites;
+  return [
+    { key: "artwork", label: "Artwork", src: getArtworkUrl(pokemon.id) },
+    { key: "shiny", label: "Shiny", src: getShinyArtworkUrl(pokemon.id) },
+    sprites.front_default && {
+      key: "front",
+      label: "Front",
+      src: sprites.front_default,
+    },
+    sprites.back_default && {
+      key: "back",
+      label: "Back",
+      src: sprites.back_default,
+    },
+  ].filter(Boolean);
+}
+
 // ----------------------------------------------------------
 // Text
 // ----------------------------------------------------------

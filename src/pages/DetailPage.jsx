@@ -9,9 +9,9 @@ import {
   formatHeight,
   formatWeight,
   getArtworkUrl,
-  getShinyArtworkUrl,
   getEnglishFlavor,
   getGenus,
+  getSpriteOptions,
   parseEvolutionChain,
 } from "../utils.js";
 import TypeBadge from "../components/TypeBadge.jsx";
@@ -26,7 +26,7 @@ import { ErrorState } from "../components/States.jsx";
 function DetailPage() {
   const { name } = useParams();
   const { data, isLoading, error } = usePokemonDetail(name);
-  const [showShiny, setShowShiny] = useState(false);
+  const [spriteKey, setSpriteKey] = useState("artwork");
 
   const pokemon = data?.pokemon;
   const species = data?.species;
@@ -53,6 +53,11 @@ function DetailPage() {
     [evolution],
   );
 
+  const spriteOptions = useMemo(
+    () => (pokemon ? getSpriteOptions(pokemon) : []),
+    [pokemon],
+  );
+
   useEffect(() => {
     document.title = pokemon
       ? `${capitalize(pokemon.name)} | PokéDex`
@@ -61,7 +66,7 @@ function DetailPage() {
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setShowShiny(false);
+    setSpriteKey("artwork");
   }, [name]);
 
   if (isLoading) return <DetailSkeleton />;
@@ -80,6 +85,8 @@ function DetailPage() {
   const flavor = species ? getEnglishFlavor(species) : "";
   const genus = species ? getGenus(species) : "";
   const cryUrl = pokemon.cries?.latest ?? pokemon.cries?.legacy ?? null;
+  const activeSprite =
+    spriteOptions.find((option) => option.key === spriteKey) ?? spriteOptions[0];
 
   return (
     <article className="detail-page" data-type={pokemon.types[0].type.name}>
@@ -87,7 +94,9 @@ function DetailPage() {
         <Link to="/" className="back-link" viewTransition>
           ← Back to dex
         </Link>
-        <span className="scan-tag">SCAN COMPLETE</span>
+        <span key={pokemon.id} className="scan-tag">
+          SCAN COMPLETE
+        </span>
       </div>
 
       <header className="detail-header">
@@ -107,16 +116,16 @@ function DetailPage() {
         <div className="detail-artwork">
           <img
             className="detail-artwork__img"
-            src={
-              showShiny
-                ? getShinyArtworkUrl(pokemon.id)
-                : getArtworkUrl(pokemon.id)
-            }
+            src={activeSprite?.src ?? getArtworkUrl(pokemon.id)}
             alt={pokemon.name}
             width={280}
             height={280}
           />
-          <span className="detail-artwork__sweep" aria-hidden="true" />
+          <span
+            key={pokemon.id}
+            className="detail-artwork__sweep"
+            aria-hidden="true"
+          />
         </div>
 
         <div className="detail-hero__info">
@@ -154,26 +163,32 @@ function DetailPage() {
 
           <div className="detail-actions">
             <CryButton url={cryUrl} />
-            <button
-              type="button"
-              className="btn btn--ghost"
-              aria-pressed={showShiny}
-              onClick={() => setShowShiny((value) => !value)}
-            >
-              <span className="btn__glyph" aria-hidden="true">
-                ✦
-              </span>
-              {showShiny ? "Shiny on" : "Shiny off"}
-            </button>
-          </div>
+          <button
+            type="button"
+            className="btn btn--ghost"
+            aria-pressed={spriteKey === "shiny"}
+            onClick={() =>
+              setSpriteKey((key) => (key === "shiny" ? "artwork" : "shiny"))
+            }
+          >
+            <span className="btn__glyph" aria-hidden="true">
+              ✦
+            </span>
+            {spriteKey === "shiny" ? "Shiny on" : "Shiny off"}
+          </button>
+        </div>
 
-          <SpriteGallery pokemon={pokemon} />
+        <SpriteGallery
+          options={spriteOptions}
+          value={spriteKey}
+          onChange={setSpriteKey}
+        />
         </div>
       </div>
 
       <section className="panel">
         <h2 className="panel__title">Base stats</h2>
-        <StatBars stats={pokemon.stats} />
+        <StatBars key={pokemon.id} stats={pokemon.stats} />
       </section>
 
       {matchups && (

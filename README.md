@@ -133,10 +133,6 @@ src/
 └── utils.js                  # ids, text, evolution, matchup helpers
 ```
 
-> `src/components/PokemonList.jsx` and `src/components/SearchForm.jsx` are
-> leftovers from an earlier version and are no longer imported — they can be
-> deleted.
-
 ---
 
 ## Routes
@@ -197,11 +193,7 @@ while `npm run deploy` updates the **live site** — you usually need both.
 
 ## Known issues / roadmap
 
-- **Type endpoint bug** — `src/lib/api.js` requests `.type/{name}` instead of
-  `/type/{name}`, so type filtering on the list and the detail page's
-  "Type matchup" panel currently do nothing. Fix: add the leading slash.
-- **Sprite gallery** currently only changes the thumbnail highlight; wiring it to
-  the hero image is a pending improvement.
+No known issues at the moment.
 
 Planned extras:
 
