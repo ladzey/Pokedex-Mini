@@ -58,6 +58,11 @@ function DetailPage() {
     [pokemon],
   );
 
+  const galleryOptions = useMemo(
+    () => spriteOptions.filter((option) => option.key !== "shiny"),
+    [spriteOptions],
+  );
+
   useEffect(() => {
     document.title = pokemon
       ? `${capitalize(pokemon.name)} | PokéDex`
@@ -86,7 +91,8 @@ function DetailPage() {
   const genus = species ? getGenus(species) : "";
   const cryUrl = pokemon.cries?.latest ?? pokemon.cries?.legacy ?? null;
   const activeSprite =
-    spriteOptions.find((option) => option.key === spriteKey) ?? spriteOptions[0];
+    spriteOptions.find((option) => option.key === spriteKey) ??
+    spriteOptions[0];
 
   return (
     <article className="detail-page" data-type={pokemon.types[0].type.name}>
@@ -163,26 +169,26 @@ function DetailPage() {
 
           <div className="detail-actions">
             <CryButton url={cryUrl} />
-          <button
-            type="button"
-            className="btn btn--ghost"
-            aria-pressed={spriteKey === "shiny"}
-            onClick={() =>
-              setSpriteKey((key) => (key === "shiny" ? "artwork" : "shiny"))
-            }
-          >
-            <span className="btn__glyph" aria-hidden="true">
-              ✦
-            </span>
-            {spriteKey === "shiny" ? "Shiny on" : "Shiny off"}
-          </button>
-        </div>
+            <button
+              type="button"
+              className="btn btn--ghost"
+              aria-pressed={spriteKey === "shiny"}
+              onClick={() =>
+                setSpriteKey((key) => (key === "shiny" ? "artwork" : "shiny"))
+              }
+            >
+              <span className="btn__glyph" aria-hidden="true">
+                ✦
+              </span>
+              {spriteKey === "shiny" ? "Shiny on" : "Shiny off"}
+            </button>
+          </div>
 
-        <SpriteGallery
-          options={spriteOptions}
-          value={spriteKey}
-          onChange={setSpriteKey}
-        />
+          <SpriteGallery
+            options={galleryOptions}
+            value={spriteKey}
+            onChange={setSpriteKey}
+          />
         </div>
       </div>
 

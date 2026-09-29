@@ -26,7 +26,8 @@ UI.
 ### Detail "scan"
 
 - Official artwork with a one-shot **scan sweep**, plus a **shiny toggle**.
-- **Sprite gallery** — front/back and shiny variants.
+- **Sprite gallery** — official artwork, the Pokémon HOME render, and Dream
+  World art (all HD); shiny via the toggle button.
 - **Dex data** — flavor text, genus ("Mouse Pokémon"), height, weight, base XP,
   and abilities (hidden abilities marked).
 - **Animated base stats** with a base-stat total.

@@ -52,20 +52,35 @@ export function getShinyArtworkUrl(id) {
  */
 export function getSpriteOptions(pokemon) {
   const sprites = pokemon.sprites;
+  const artwork = sprites.other?.["official-artwork"] ?? {};
+  const home = sprites.other?.home ?? {};
+  const dreamWorld = sprites.other?.dream_world ?? {};
+
   return [
-    { key: "artwork", label: "Artwork", src: getArtworkUrl(pokemon.id) },
-    { key: "shiny", label: "Shiny", src: getShinyArtworkUrl(pokemon.id) },
-    sprites.front_default && {
+    {
+      key: "artwork",
+      label: "Artwork",
+      src: artwork.front_default ?? getArtworkUrl(pokemon.id),
+    },
+    {
+      key: "shiny",
+      label: "Shiny",
+      src:
+        artwork.front_shiny ??
+        home.front_shiny ??
+        getShinyArtworkUrl(pokemon.id),
+    },
+    {
       key: "front",
       label: "Front",
-      src: sprites.front_default,
+      src: home.front_default ?? sprites.front_default,
     },
-    sprites.back_default && {
-      key: "back",
-      label: "Back",
-      src: sprites.back_default,
+    dreamWorld.front_default && {
+      key: "dream-world",
+      label: "Dream World",
+      src: dreamWorld.front_default,
     },
-  ].filter(Boolean);
+  ].filter((option) => option && option.src);
 }
 
 // ----------------------------------------------------------
