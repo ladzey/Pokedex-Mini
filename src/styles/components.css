@@ -107,6 +107,12 @@
   padding-bottom: 4px;
   scrollbar-width: thin;
   max-width: 100%;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.filter-bar__types::-webkit-scrollbar {
+  display: none;
 }
 
 .filter-bar__selects {
