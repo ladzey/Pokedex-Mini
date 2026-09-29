@@ -1,80 +1,216 @@
 # PokéDex Mini
 
-A small React application for browsing Pokémon with data provided by the [PokéAPI](https://pokeapi.co/).
+A handheld Pokédex-style analyzer for the National Dex, built with React and
+plain CSS. Browse every Pokémon, run a "scan" on any one of them, and read their
+stats, matchups, and evolution line — all wrapped in a retro-futuristic device
+UI.
+
+**Live demo:** https://ladzey.github.io/Pokedex-Mini/
+
+---
 
 ## Features
 
-- Browse the first 20 Pokémon from the PokéAPI
-- Search for a Pokémon by name
-- View a Pokémon's official artwork, types, and base stats
-- Navigate between the Pokémon list and detail pages
-- Responsive loading and error states
-- Client-side routing with React Router
+### Browsing
+
+- **Full National Dex** — every species (~1,300 entries) fetched once and cached.
+- **Instant search** — debounced input with live sprite suggestions; press a
+  suggestion or Enter to jump straight to its page.
+- **Filters & sort** — filter by type (18 chips) and generation (I–IX), sort by
+  number or name.
+- **URL-synced state** — `?q=&type=&gen=&sort=` live in the URL, so views are
+  shareable and the back button restores them.
+- **Infinite scroll** — the next page of cards loads automatically just before
+  you reach the bottom.
+
+### Detail "scan"
+
+- Official artwork with a one-shot **scan sweep**, plus a **shiny toggle**.
+- **Sprite gallery** — front/back and shiny variants.
+- **Dex data** — flavor text, genus ("Mouse Pokémon"), height, weight, base XP,
+  and abilities (hidden abilities marked).
+- **Animated base stats** with a base-stat total.
+- **Type matchup** — computed weaknesses, resistances, and immunities (handles
+  dual types and ×0.25/×4 multipliers).
+- **Evolution chain** — clickable stages with the evolution condition.
+- **Cry playback** — plays the Pokémon's cry from the API.
+
+### Polish
+
+- Boot-up intro, Pokéball spinner, and skeleton loaders.
+- Route **view transitions** and scroll-reveal card animations.
+- Per-Pokémon accent color derived from its primary type.
+- Responsive from mobile to desktop, keyboard accessible, and respects
+  `prefers-reduced-motion`.
+
+---
 
 ## Tech stack
 
-- React 19
-- React Router
-- Vite
-- JavaScript
-- PokéAPI
+| Layer | Choice |
+| --- | --- |
+| UI | React 19 |
+| Routing | React Router 7 (`HashRouter`) |
+| Build tool | Vite 8 |
+| Styling | Plain CSS with custom-property design tokens (no framework) |
+| Data | [PokéAPI](https://pokeapi.co/) + the [PokeAPI sprites](https://github.com/PokeAPI/sprites) CDN |
+
+No extra runtime dependencies beyond React and React Router — data fetching uses
+the browser `fetch`, and animations use CSS plus the View Transitions API.
+
+---
 
 ## Getting started
 
 ### Prerequisites
 
-- Node.js and npm
+- Node.js 18+ and npm
 
-### Installation
+### Install and run
 
 ```bash
 npm install
-```
-
-### Run the development server
-
-```bash
 npm run dev
 ```
 
-Open the local URL shown by Vite in your browser.
+Open the local URL Vite prints in your browser.
+
+---
 
 ## Available scripts
 
 | Command | Description |
 | --- | --- |
-| `npm run dev` | Start the development server |
-| `npm run build` | Create a production build |
+| `npm run dev` | Start the Vite development server with HMR |
+| `npm run build` | Create a production build in `dist/` |
 | `npm run preview` | Preview the production build locally |
-| `npm run lint` | Run ESLint |
-| `npm run deploy` | Deploy the `dist` directory to GitHub Pages |
+| `npm run lint` | Run ESLint over the project |
+| `npm run predeploy` | Hook that builds the app before deploying |
+| `npm run deploy` | Publish `dist/` to GitHub Pages (`gh-pages` branch) |
+
+---
 
 ## Project structure
 
 ```text
 src/
 ├── components/
-│   ├── Layout.jsx
-│   ├── PokemonList.jsx
-│   └── SearchForm.jsx
+│   ├── BootScreen.jsx        # one-time boot-up intro
+│   ├── CryButton.jsx         # plays a Pokémon's cry
+│   ├── EvolutionChain.jsx    # clickable evolution stages
+│   ├── FilterBar.jsx         # type chips + generation/sort selects
+│   ├── Layout.jsx            # chassis top bar, search, footer, <Outlet />
+│   ├── PokeBallSpinner.jsx   # loading indicator
+│   ├── PokemonCard.jsx       # grid card with lazy type badges
+│   ├── SearchBox.jsx         # debounced search + suggestions
+│   ├── Skeletons.jsx         # card grid and detail skeletons
+│   ├── SpriteGallery.jsx     # sprite variant thumbnails
+│   ├── StatBars.jsx          # animated base stats
+│   ├── States.jsx            # error + empty states
+│   ├── TypeBadge.jsx         # color-coded type pill
+│   └── TypeMatchup.jsx       # weakness / resistance / immunity rows
+├── hooks/
+│   ├── useDebounce.js
+│   ├── useFetch.js           # cached fetch with loading/error state
+│   ├── useInfinite.js        # paginated scroll window
+│   ├── useLocalStorage.js
+│   ├── usePokemonDetail.js   # pokemon + species + evolution
+│   └── useReveal.js          # scroll-reveal via IntersectionObserver
+├── lib/
+│   └── api.js                # cached PokéAPI client
 ├── pages/
-│   ├── DetailPage.jsx
 │   ├── ListPage.jsx
+│   ├── DetailPage.jsx
 │   └── NotFoundPage.jsx
+├── styles/
+│   ├── tokens.css            # colors, type palette, fonts
+│   ├── base.css              # reset, layout, boot screen
+│   └── components.css        # component styles
 ├── App.jsx
-├── config.js
-├── index.css
+├── config.js                 # API + sprite base URLs
+├── index.css                 # imports the style layers
 ├── main.jsx
-└── utils.js
+└── utils.js                  # ids, text, evolution, matchup helpers
 ```
+
+> `src/components/PokemonList.jsx` and `src/components/SearchForm.jsx` are
+> leftovers from an earlier version and are no longer imported — they can be
+> deleted.
+
+---
 
 ## Routes
 
-- `/` — Pokémon list and search form
-- `/pokemon/:name` — Pokémon details
-- `*` — Not-found page
+Routing uses `HashRouter`, so deep links work on GitHub Pages without any server
+configuration.
+
+| Path | Page |
+| --- | --- |
+| `/#/` | National Dex list, search, and filters |
+| `/#/pokemon/:name` | Detail "scan" for a Pokémon |
+| `/#/*` | Not-found page |
+
+---
 
 ## Data sources
 
-- Pokémon data: [PokéAPI](https://pokeapi.co/api/v2)
-- Pokémon sprites: [PokeAPI sprites](https://github.com/PokeAPI/sprites)
+Pokémon data comes from [PokéAPI](https://pokeapi.co/):
+
+| Endpoint | Used for |
+| --- | --- |
+| `GET /pokemon?limit=100000` | Full species list (search, sort, filter, paging) |
+| `GET /pokemon/{name-or-id}` | Stats, types, abilities, sprites, cries |
+| `GET /pokemon-species/{name-or-id}` | Flavor text, genus, evolution chain URL |
+| `GET /evolution-chain/{id}` | Evolution stages |
+| `GET /type/{name}` | Type matchups and type membership |
+
+Artwork and sprites are served from the PokeAPI sprites repository:
+
+- `.../sprites/pokemon/{id}.png`
+- `.../sprites/pokemon/other/official-artwork/{id}.png` (and `/shiny/`)
+
+---
+
+## Design notes
+
+The UI is built as an in-world handheld analyzer rather than a generic card
+grid: a dark chassis, red shell, deep-teal LCD glass, a phosphor-mint readout
+glow, and amber status LEDs. Colors, spacing, and radii live as custom
+properties in `src/styles/tokens.css`, and each of the 18 canonical type colors
+is exposed as `--type-*`, which drives per-Pokémon accents and type badges.
+
+---
+
+## Deployment
+
+Deployed to GitHub Pages via the `gh-pages` package. `vite.config.js` sets
+`base: "/Pokedex-Mini/"`, which must match the repository name.
+
+```bash
+npm run deploy
+```
+
+After a change, remember that a normal push updates the **source** on `main`,
+while `npm run deploy` updates the **live site** — you usually need both.
+
+---
+
+## Known issues / roadmap
+
+- **Type endpoint bug** — `src/lib/api.js` requests `.type/{name}` instead of
+  `/type/{name}`, so type filtering on the list and the detail page's
+  "Type matchup" panel currently do nothing. Fix: add the leading slash.
+- **Sprite gallery** currently only changes the thumbnail highlight; wiring it to
+  the hero image is a pending improvement.
+
+Planned extras:
+
+- **Who's That Pokémon?** — silhouette guessing game.
+- **Favorites / team builder** — save six Pokémon and summarize type coverage.
+- **Compare mode** — two Pokémon side by side.
+
+---
+
+## Credits
+
+Data from [PokéAPI](https://pokeapi.co/). Built with React 19 + Vite.
