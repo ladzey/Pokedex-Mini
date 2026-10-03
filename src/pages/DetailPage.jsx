@@ -20,6 +20,7 @@ import TypeMatchup from "../components/TypeMatchup.jsx";
 import EvolutionChain from "../components/EvolutionChain.jsx";
 import SpriteGallery from "../components/SpriteGallery.jsx";
 import CryButton from "../components/CryButton.jsx";
+import TcgCardRail from "../components/TcgCardRail.jsx";
 import { DetailSkeleton } from "../components/Skeletons.jsx";
 import { ErrorState } from "../components/States.jsx";
 
@@ -93,6 +94,7 @@ function DetailPage() {
   const activeSprite =
     spriteOptions.find((option) => option.key === spriteKey) ??
     spriteOptions[0];
+  const tcgName = pokemon.species?.name ?? pokemon.name;
 
   return (
     <article className="detail-page" data-type={pokemon.types[0].type.name}>
@@ -210,6 +212,10 @@ function DetailPage() {
           </section>
         </div>
       </div>
+      <section className="panel detail-tcg">
+        <h2 className="panel__title">Trading Cards</h2>
+        <TcgCardRail key={tcgName} pokemonName={tcgName} />
+      </section>
     </article>
   );
 }
