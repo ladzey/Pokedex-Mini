@@ -26,8 +26,7 @@ function Layout() {
       <header className="topbar">
         <Link to="/" className="brand" aria-label="PokéDex Mini home">
           <span className="brand__ball" aria-hidden="true" />
-          <span className="brand__name">POKÉDEX</span>
-          <span className="brand__sub">MINI</span>
+          <span className="brand__name">PokéDex</span>
         </Link>
         <SearchBox />
       </header>
@@ -41,7 +40,10 @@ function Layout() {
         <a href="https://pokeapi.co" target="_blank" rel="noreferrer">
           PokéAPI
         </a>{" "}
-        · Built with React + Vite
+        and{" "}
+        <a href="https://pokemontcg.io" target="_blank" rel="noreferrer">
+          Pokémon TCG API
+        </a>
       </footer>
     </div>
   );
