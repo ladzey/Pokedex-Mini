@@ -1,9 +1,8 @@
 # PokéDex Mini
 
-A handheld Pokédex-style analyzer for the National Dex, built with React and
-plain CSS. Browse every Pokémon, run a "scan" on any one of them, and read their
-stats, matchups, and evolution line — all wrapped in a retro-futuristic device
-UI.
+A modern, light Pokédex for the National Dex, built with React and plain CSS.
+Browse every Pokémon, view its stats, matchups, and evolution line, and scroll
+through its real Pokémon TCG cards.
 
 **Live demo:** https://ladzey.github.io/Pokedex-Mini/
 
@@ -35,6 +34,8 @@ UI.
   dual types and ×0.25/×4 multipliers).
 - **Evolution chain** — clickable stages with the evolution condition.
 - **Cry playback** — plays the Pokémon's cry from the API.
+- **Trading cards** — a scrollable rail of real Pokémon TCG cards (loaded 20 at
+  a time); click a card to open its hi-res scan.
 
 ### Polish
 
@@ -54,7 +55,7 @@ UI.
 | Routing | React Router 7 (`HashRouter`) |
 | Build tool | Vite 8 |
 | Styling | Plain CSS with custom-property design tokens (no framework) |
-| Data | [PokéAPI](https://pokeapi.co/) + the [PokeAPI sprites](https://github.com/PokeAPI/sprites) CDN |
+| Data | [PokéAPI](https://pokeapi.co/) + [PokeAPI sprites](https://github.com/PokeAPI/sprites) + the [Pokémon TCG API](https://pokemontcg.io/) |
 
 No extra runtime dependencies beyond React and React Router — data fetching uses
 the browser `fetch`, and animations use CSS plus the View Transitions API.
@@ -100,25 +101,28 @@ src/
 │   ├── CryButton.jsx         # plays a Pokémon's cry
 │   ├── EvolutionChain.jsx    # clickable evolution stages
 │   ├── FilterBar.jsx         # type chips + generation/sort selects
-│   ├── Layout.jsx            # chassis top bar, search, footer, <Outlet />
+│ ├── Layout.jsx # top bar, search, footer, <Outlet />
 │   ├── PokeBallSpinner.jsx   # loading indicator
 │   ├── PokemonCard.jsx       # grid card with lazy type badges
 │   ├── SearchBox.jsx         # debounced search + suggestions
 │   ├── Skeletons.jsx         # card grid and detail skeletons
-│   ├── SpriteGallery.jsx     # sprite variant thumbnails
-│   ├── StatBars.jsx          # animated base stats
-│   ├── States.jsx            # error + empty states
-│   ├── TypeBadge.jsx         # color-coded type pill
-│   └── TypeMatchup.jsx       # weakness / resistance / immunity rows
+│ ├── SpriteGallery.jsx # sprite variant thumbnails
+│ ├── StatBars.jsx # animated base stats
+│ ├── States.jsx # error + empty states
+│ ├── TcgCardRail.jsx # scrollable rail of real TCG cards
+│ ├── TypeBadge.jsx # color-coded type pill
+│ └── TypeMatchup.jsx # weakness / resistance / immunity rows
 ├── hooks/
-│   ├── useDebounce.js
-│   ├── useFetch.js           # cached fetch with loading/error state
-│   ├── useInfinite.js        # paginated scroll window
-│   ├── useLocalStorage.js
-│   ├── usePokemonDetail.js   # pokemon + species + evolution
-│   └── useReveal.js          # scroll-reveal via IntersectionObserver
+│ ├── useDebounce.js
+│ ├── useFetch.js # cached fetch with loading/error state
+│ ├── useInfinite.js # paginated scroll window
+│ ├── useLocalStorage.js
+│ ├── usePokemonDetail.js # pokemon + species + evolution
+│ ├── useReveal.js # scroll-reveal via IntersectionObserver
+│ └── useTcgCards.js # paged Pokémon TCG cards
 ├── lib/
-│   └── api.js                # cached PokéAPI client
+│ ├── api.js # cached PokéAPI client
+│ └── tcg.js # cached Pokémon TCG API client
 ├── pages/
 │   ├── ListPage.jsx
 │   ├── DetailPage.jsx
@@ -128,7 +132,7 @@ src/
 │   ├── base.css              # reset, layout, boot screen
 │   └── components.css        # component styles
 ├── App.jsx
-├── config.js                 # API + sprite base URLs
+├── config.js # PokéAPI + sprite + TCG base URLs
 ├── index.css                 # imports the style layers
 ├── main.jsx
 └── utils.js                  # ids, text, evolution, matchup helpers
@@ -166,15 +170,23 @@ Artwork and sprites are served from the PokeAPI sprites repository:
 - `.../sprites/pokemon/{id}.png`
 - `.../sprites/pokemon/other/official-artwork/{id}.png` (and `/shiny/`)
 
+Trading-card data comes from the [Pokémon TCG API](https://pokemontcg.io/):
+
+| Endpoint | Used for |
+| --- | --- |
+| `GET /cards?q=name:"<Name>"&pageSize=20` | Real trading cards for a Pokémon (paged) |
+
+Card images are hosted at `https://images.pokemontcg.io/...`.
+
 ---
 
 ## Design notes
 
-The UI is built as an in-world handheld analyzer rather than a generic card
-grid: a dark chassis, red shell, deep-teal LCD glass, a phosphor-mint readout
-glow, and amber status LEDs. Colors, spacing, and radii live as custom
-properties in `src/styles/tokens.css`, and each of the 18 canonical type colors
-is exposed as `--type-*`, which drives per-Pokémon accents and type badges.
+The UI is intentionally soft and modern: light surfaces, a red Pokéball accent,
+flat type-tinted chips, and rounded typography (Baloo 2 + Inter). Colors,
+spacing, and radii live as custom properties in `src/styles/tokens.css`, and each
+of the 18 canonical type colors is exposed as `--type-*`, driving per-Pokémon
+accents and badges.
 
 ---
 
@@ -206,4 +218,4 @@ Planned extras:
 
 ## Credits
 
-Data from [PokéAPI](https://pokeapi.co/). Built with React 19 + Vite.
+Data from [PokéAPI](https://pokeapi.co/) and the [Pokémon TCG API](https://pokemontcg.io/). Built with React 19 + Vite.
