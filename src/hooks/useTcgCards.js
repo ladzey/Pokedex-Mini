@@ -18,12 +18,11 @@ export function useTcgCards(dexId) {
     setState((prev) => (prev.isLoading ? prev : { ...prev, isLoading: true }));
 
     getTcgCards(dexId, page, PAGE_SIZE)
-      .then((batch) => {
+      .then(({ cards: batch, hasMore }) => {
         if (!isCurrent) return;
         setState((prev) => ({
           cards: page === 1 ? batch : [...prev.cards, ...batch],
-          // TCGdex returns a bare array, so a short page means the end.
-          hasMore: batch.length === PAGE_SIZE,
+          hasMore,
           isLoading: false,
           error: null,
         }));

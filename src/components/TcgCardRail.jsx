@@ -29,7 +29,7 @@ function TcgCardRail({ dexId, name }) {
     );
   }
 
-  if (!isLoading && cards.length === 0) {
+  if (!isLoading && !hasMore && cards.length === 0) {
     return (
       <p className="rail__status">No trading cards found for {name}.</p>
     );

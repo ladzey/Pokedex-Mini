@@ -30,16 +30,21 @@ async function tcgGet(url) {
  * Cards for a National Dex number (from the Pokémon species id). TCGdex filters
  * the `dexId` array with strict equality (`eq:`), so forms and punctuation need
  * no name mapping. Adds normalized `low`/`high` image URLs.
+ *
+ * Returns `{ cards, hasMore }`. `hasMore` is derived from the RAW page length
+ * (before dropping image-less cards), so filtering can't end paging early.
  */
 export async function getTcgCards(dexId, page = 1, pageSize = 20) {
   const data = await tcgGet(buildUrl(dexId, page, pageSize));
-  const cards = Array.isArray(data) ? data : [];
+  const raw = Array.isArray(data) ? data : [];
 
-  return cards
+  const cards = raw
     .filter((card) => card.image)
     .map((card) => ({
       ...card,
       imageSmall: `${card.image}/low.webp`,
       imageLarge: `${card.image}/high.webp`,
     }));
+
+  return { cards, hasMore: raw.length === pageSize };
 }
