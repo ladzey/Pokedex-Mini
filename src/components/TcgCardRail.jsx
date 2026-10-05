@@ -1,10 +1,8 @@
 import { useEffect, useRef } from "react";
 import { useTcgCards } from "../hooks/useTcgCards.js";
-import { capitalize } from "../utils.js";
 
-function TcgCardRail({ pokemonName }) {
-  const { cards, isLoading, error, hasMore, loadMore } =
-    useTcgCards(pokemonName);
+function TcgCardRail({ dexId, name }) {
+  const { cards, isLoading, error, hasMore, loadMore } = useTcgCards(dexId);
   const sentinelRef = useRef(null);
 
   // Load the next page when the sentinel scrolls into view.
@@ -33,9 +31,7 @@ function TcgCardRail({ pokemonName }) {
 
   if (!isLoading && cards.length === 0) {
     return (
-      <p className="rail__status">
-        No trading cards found for {capitalize(pokemonName)}.
-      </p>
+      <p className="rail__status">No trading cards found for {name}.</p>
     );
   }
 
@@ -54,22 +50,20 @@ function TcgCardRail({ pokemonName }) {
               <li key={card.id} className="rail__item">
                 <a
                   className="tcg-card"
-                  href={card.images.large}
+                  href={card.imageLarge}
                   target="_blank"
                   rel="noreferrer"
-                  title={`${card.name} — ${card.set?.name ?? ""}`}
+                  title={card.name}
                 >
                   <img
                     className="tcg-card__img"
-                    src={card.images.small}
+                    src={card.imageSmall}
                     alt={`${card.name} trading card`}
                     loading="lazy"
                     width={170}
                     height={238}
                   />
-                  <span className="tcg-card__meta">
-                    #{card.number} · {card.rarity ?? "—"}
-                  </span>
+                  <span className="tcg-card__meta">#{card.localId}</span>
                 </a>
               </li>
             ))}

@@ -94,7 +94,7 @@ function DetailPage() {
   const activeSprite =
     spriteOptions.find((option) => option.key === spriteKey) ??
     spriteOptions[0];
-  const tcgName = pokemon.species?.name ?? pokemon.name;
+  const dexId = species?.id ?? pokemon.id;
 
   return (
     <article className="detail-page" data-type={pokemon.types[0].type.name}>
@@ -214,7 +214,7 @@ function DetailPage() {
       </div>
       <section className="panel detail-tcg">
         <h2 className="panel__title">Trading Cards</h2>
-        <TcgCardRail key={tcgName} pokemonName={tcgName} />
+        <TcgCardRail key={dexId} dexId={dexId} name={pokemon.name} />
       </section>
     </article>
   );

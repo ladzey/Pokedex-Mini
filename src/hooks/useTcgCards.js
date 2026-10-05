@@ -3,11 +3,11 @@ import { getTcgCards } from "../lib/tcg.js";
 
 const PAGE_SIZE = 20;
 
-export function useTcgCards(pokemonName) {
+export function useTcgCards(dexId) {
   const [page, setPage] = useState(1);
   const [state, setState] = useState({
     cards: [],
-    total: 0,
+    hasMore: true,
     isLoading: true,
     error: null,
   });
@@ -17,15 +17,13 @@ export function useTcgCards(pokemonName) {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setState((prev) => (prev.isLoading ? prev : { ...prev, isLoading: true }));
 
-    getTcgCards(pokemonName, page, PAGE_SIZE)
-      .then((data) => {
+    getTcgCards(dexId, page, PAGE_SIZE)
+      .then((batch) => {
         if (!isCurrent) return;
         setState((prev) => ({
-          cards:
-            page === 1
-              ? (data.data ?? [])
-              : [...prev.cards, ...(data.data ?? [])],
-          total: data.totalCount ?? 0,
+          cards: page === 1 ? batch : [...prev.cards, ...batch],
+          // TCGdex returns a bare array, so a short page means the end.
+          hasMore: batch.length === PAGE_SIZE,
           isLoading: false,
           error: null,
         }));
@@ -38,15 +36,13 @@ export function useTcgCards(pokemonName) {
     return () => {
       isCurrent = false;
     };
-  }, [pokemonName, page]);
-
-  const hasMore = page * PAGE_SIZE < state.total;
+  }, [dexId, page]);
 
   const loadMore = useCallback(() => {
-    setPage((current) =>
-      current * PAGE_SIZE < state.total ? current + 1 : current,
-    );
-  }, [state.total]);
+    if (state.hasMore && !state.isLoading) {
+      setPage((current) => current + 1);
+    }
+  }, [state.hasMore, state.isLoading]);
 
-  return { ...state, hasMore, loadMore };
+  return { ...state, loadMore };
 }

@@ -55,7 +55,7 @@ through its real Pokémon TCG cards.
 | Routing | React Router 7 (`HashRouter`) |
 | Build tool | Vite 8 |
 | Styling | Plain CSS with custom-property design tokens (no framework) |
-| Data | [PokéAPI](https://pokeapi.co/) + [PokeAPI sprites](https://github.com/PokeAPI/sprites) + the [Pokémon TCG API](https://pokemontcg.io/) |
+| Data | [PokéAPI](https://pokeapi.co/) + [PokeAPI sprites](https://github.com/PokeAPI/sprites) + [TCGdex](https://tcgdex.dev/) |
 
 No extra runtime dependencies beyond React and React Router — data fetching uses
 the browser `fetch`, and animations use CSS plus the View Transitions API.
@@ -122,7 +122,7 @@ src/
 │ └── useTcgCards.js # paged Pokémon TCG cards
 ├── lib/
 │ ├── api.js # cached PokéAPI client
-│ └── tcg.js # cached Pokémon TCG API client
+│ └── tcg.js # cached TCGdex client
 ├── pages/
 │   ├── ListPage.jsx
 │   ├── DetailPage.jsx
@@ -170,13 +170,14 @@ Artwork and sprites are served from the PokeAPI sprites repository:
 - `.../sprites/pokemon/{id}.png`
 - `.../sprites/pokemon/other/official-artwork/{id}.png` (and `/shiny/`)
 
-Trading-card data comes from the [Pokémon TCG API](https://pokemontcg.io/):
+Trading-card data comes from [TCGdex](https://tcgdex.dev/) (free, no key):
 
 | Endpoint | Used for |
 | --- | --- |
-| `GET /cards?q=name:"<Name>"&pageSize=20` | Real trading cards for a Pokémon (paged) |
+| `GET /cards?dexId=eq:<n>&pagination:page=<p>&pagination:itemsPerPage=20` | Real trading cards for a Pokémon, by National Dex number (paged) |
 
-Card images are hosted at `https://images.pokemontcg.io/...`.
+Card images are served from `https://assets.tcgdex.net/...` as `low.webp`
+(245px) in the rail and `high.webp` (600px) when a card is opened.
 
 ---
 
@@ -218,4 +219,4 @@ Planned extras:
 
 ## Credits
 
-Data from [PokéAPI](https://pokeapi.co/) and the [Pokémon TCG API](https://pokemontcg.io/). Built with React 19 + Vite.
+Data from [PokéAPI](https://pokeapi.co/) and [TCGdex](https://tcgdex.dev/). Built with React 19 + Vite.

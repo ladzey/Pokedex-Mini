@@ -41,8 +41,8 @@ function Layout() {
           PokéAPI
         </a>{" "}
         and{" "}
-        <a href="https://pokemontcg.io" target="_blank" rel="noreferrer">
-          Pokémon TCG API
+        <a href="https://tcgdex.dev" target="_blank" rel="noreferrer">
+          TCGdex
         </a>
       </footer>
     </div>
