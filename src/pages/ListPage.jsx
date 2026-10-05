@@ -137,14 +137,16 @@ function ListPage() {
         )}
       </div>
 
-      <FilterBar
-        type={type}
-        gen={gen}
-        sort={sort}
-        onType={(value) => updateParam("type", value)}
-        onGen={(value) => updateParam("gen", value)}
-        onSort={(value) => updateParam("sort", value)}
-      />
+      <div className="dex__toolbar">
+        <FilterBar
+          type={type}
+          gen={gen}
+          sort={sort}
+          onType={(value) => updateParam("type", value)}
+          onGen={(value) => updateParam("gen", value)}
+          onSort={(value) => updateParam("sort", value)}
+        />
+      </div>
 
       {isTypeLoading && type !== "all" && (
         <p className="muted">Loading {capitalize(type)} types…</p>

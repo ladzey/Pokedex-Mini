@@ -20,6 +20,7 @@ import TypeMatchup from "../components/TypeMatchup.jsx";
 import EvolutionChain from "../components/EvolutionChain.jsx";
 import SpriteGallery from "../components/SpriteGallery.jsx";
 import CryButton from "../components/CryButton.jsx";
+import TcgCardRail from "../components/TcgCardRail.jsx";
 import { DetailSkeleton } from "../components/Skeletons.jsx";
 import { ErrorState } from "../components/States.jsx";
 
@@ -93,6 +94,7 @@ function DetailPage() {
   const activeSprite =
     spriteOptions.find((option) => option.key === spriteKey) ??
     spriteOptions[0];
+  const tcgName = pokemon.species?.name ?? pokemon.name;
 
   return (
     <article className="detail-page" data-type={pokemon.types[0].type.name}>
@@ -118,53 +120,21 @@ function DetailPage() {
         <p className="detail-genus">{genus}</p>
       </header>
 
-      <div className="detail-hero">
-        <div className="detail-artwork">
-          <img
-            className="detail-artwork__img"
-            src={activeSprite?.src ?? getArtworkUrl(pokemon.id)}
-            alt={pokemon.name}
-            width={280}
-            height={280}
-          />
-          <span
-            key={pokemon.id}
-            className="detail-artwork__sweep"
-            aria-hidden="true"
-          />
-        </div>
-
-        <div className="detail-hero__info">
-          {flavor && <p className="detail-flavor">{flavor}</p>}
-
-          <dl className="vitals">
-            <div>
-              <dt>Height</dt>
-              <dd>{formatHeight(pokemon.height)}</dd>
-            </div>
-            <div>
-              <dt>Weight</dt>
-              <dd>{formatWeight(pokemon.weight)}</dd>
-            </div>
-            <div>
-              <dt>Base XP</dt>
-              <dd>{pokemon.base_experience ?? "—"}</dd>
-            </div>
-          </dl>
-
-          <div className="abilities">
-            <span className="abilities__label">Abilities</span>
-            <ul className="abilities__list">
-              {pokemon.abilities.map((slot) => (
-                <li
-                  key={slot.ability.name}
-                  className={slot.is_hidden ? "is-hidden" : ""}
-                >
-                  {capitalize(slot.ability.name)}
-                  {slot.is_hidden && <em> · hidden</em>}
-                </li>
-              ))}
-            </ul>
+      <div className="detail-layout">
+        <aside className="detail-media">
+          <div className="detail-artwork">
+            <img
+              className="detail-artwork__img"
+              src={activeSprite?.src ?? getArtworkUrl(pokemon.id)}
+              alt={pokemon.name}
+              width={280}
+              height={280}
+            />
+            <span
+              key={pokemon.id}
+              className="detail-artwork__sweep"
+              aria-hidden="true"
+            />
           </div>
 
           <div className="detail-actions">
@@ -189,24 +159,62 @@ function DetailPage() {
             value={spriteKey}
             onChange={setSpriteKey}
           />
+
+          <dl className="vitals">
+            <div>
+              <dt>Height</dt>
+              <dd>{formatHeight(pokemon.height)}</dd>
+            </div>
+            <div>
+              <dt>Weight</dt>
+              <dd>{formatWeight(pokemon.weight)}</dd>
+            </div>
+            <div>
+              <dt>Base XP</dt>
+              <dd>{pokemon.base_experience ?? "—"}</dd>
+            </div>
+          </dl>
+        </aside>
+
+        <div className="detail-body">
+          {flavor && <p className="detail-flavor">{flavor}</p>}
+
+          <div className="abilities">
+            <span className="abilities__label">Abilities</span>
+            <ul className="abilities__list">
+              {pokemon.abilities.map((slot) => (
+                <li
+                  key={slot.ability.name}
+                  className={slot.is_hidden ? "is-hidden" : ""}
+                >
+                  {capitalize(slot.ability.name)}
+                  {slot.is_hidden && <em> · hidden</em>}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <section className="panel">
+            <h2 className="panel__title">Base stats</h2>
+            <StatBars key={pokemon.id} stats={pokemon.stats} />
+          </section>
+
+          {matchups && (
+            <section className="panel">
+              <h2 className="panel__title">Type matchup</h2>
+              <TypeMatchup matchups={matchups} />
+            </section>
+          )}
+
+          <section className="panel">
+            <h2 className="panel__title">Evolution</h2>
+            <EvolutionChain stages={stages} />
+          </section>
         </div>
       </div>
-
-      <section className="panel">
-        <h2 className="panel__title">Base stats</h2>
-        <StatBars key={pokemon.id} stats={pokemon.stats} />
-      </section>
-
-      {matchups && (
-        <section className="panel">
-          <h2 className="panel__title">Type matchup</h2>
-          <TypeMatchup matchups={matchups} />
-        </section>
-      )}
-
-      <section className="panel">
-        <h2 className="panel__title">Evolution</h2>
-        <EvolutionChain stages={stages} />
+      <section className="panel detail-tcg">
+        <h2 className="panel__title">Trading Cards</h2>
+        <TcgCardRail key={tcgName} pokemonName={tcgName} />
       </section>
     </article>
   );
