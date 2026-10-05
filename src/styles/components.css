@@ -355,6 +355,7 @@
 
 .detail-page {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 20px;
 }
 
@@ -431,6 +432,7 @@
   grid-template-columns: 340px minmax(0, 1fr);
   gap: 24px;
   align-items: start;
+  min-width: 0;
 }
 
 .detail-media {
@@ -840,19 +842,23 @@
 /* ============================================================ TCG rail */
 
 .detail-tcg {
+  min-width: 0;
+  overflow: hidden;
   padding-bottom: 12px;
 }
 
 .rail {
   position: relative;
+  min-width: 0;
 }
 
 .rail__track {
   display: flex;
   gap: 14px;
+  max-width: 100%;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  padding: 4px 4px 14px;
+  padding: 8px 4px 14px;
   margin: 0;
   list-style: none;
   scrollbar-width: thin;
